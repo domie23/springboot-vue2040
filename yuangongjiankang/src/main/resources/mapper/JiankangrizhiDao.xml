@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JiankangrizhiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.jiankangrizhi_uuid_number as jiankangrizhiUuidNumber
+        ,a.jiankangrizhi_name as jiankangrizhiName
+        ,a.jiankangrizhi_types as jiankangrizhiTypes
+        ,a.shuimian_types as shuimianTypes
+        ,a.yinjiu_types as yinjiuTypes
+        ,a.xiyan_types as xiyanTypes
+        ,a.gaoya as gaoya
+        ,a.diya as diya
+        ,a.shengao as shengao
+        ,a.tizhong as tizhong
+        ,a.zhuangtai_types as zhuangtaiTypes
+        ,a.jiankangrizhi_content as jiankangrizhiContent
+        ,a.suoshuriqi_time as suoshuriqiTime
+        ,a.insert_time as insertTime
+        ,a.reliang as reliang
+        ,a.bmi_zhi as bmiZhi
+        ,a.tuijian_types as tuijianTypes
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JiankangrizhiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_email as yonghuEmail
+
+        FROM jiankangrizhi  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.jiankangrizhiUuidNumber != '' and params.jiankangrizhiUuidNumber != null and params.jiankangrizhiUuidNumber != 'null' ">
+                and a.jiankangrizhi_uuid_number like CONCAT('%',#{params.jiankangrizhiUuidNumber},'%')
+            </if>
+            <if test=" params.jiankangrizhiName != '' and params.jiankangrizhiName != null and params.jiankangrizhiName != 'null' ">
+                and a.jiankangrizhi_name like CONCAT('%',#{params.jiankangrizhiName},'%')
+            </if>
+            <if test="params.jiankangrizhiTypes != null and params.jiankangrizhiTypes != ''">
+                and a.jiankangrizhi_types = #{params.jiankangrizhiTypes}
+            </if>
+            <if test="params.shuimianTypes != null and params.shuimianTypes != ''">
+                and a.shuimian_types = #{params.shuimianTypes}
+            </if>
+            <if test="params.yinjiuTypes != null and params.yinjiuTypes != ''">
+                and a.yinjiu_types = #{params.yinjiuTypes}
+            </if>
+            <if test="params.xiyanTypes != null and params.xiyanTypes != ''">
+                and a.xiyan_types = #{params.xiyanTypes}
+            </if>
+            <if test="params.gaoyaStart != null and params.gaoyaStart != ''">
+                <![CDATA[  and a.gaoya >= #{params.gaoyaStart}   ]]>
+            </if>
+            <if test="params.gaoyaEnd != null and params.gaoyaEnd != ''">
+                <![CDATA[  and a.gaoya <= #{params.gaoyaEnd}   ]]>
+            </if>
+             <if test="params.gaoya != null and params.gaoya != ''">
+                and a.gaoya = #{params.gaoya}
+             </if>
+            <if test="params.diyaStart != null and params.diyaStart != ''">
+                <![CDATA[  and a.diya >= #{params.diyaStart}   ]]>
+            </if>
+            <if test="params.diyaEnd != null and params.diyaEnd != ''">
+                <![CDATA[  and a.diya <= #{params.diyaEnd}   ]]>
+            </if>
+             <if test="params.diya != null and params.diya != ''">
+                and a.diya = #{params.diya}
+             </if>
+            <if test="params.shengaoStart != null ">
+                <![CDATA[  and a.shengao >= #{params.shengaoStart}   ]]>
+            </if>
+            <if test="params.shengaoEnd != null ">
+                <![CDATA[  and a.shengao <= #{params.shengaoEnd}   ]]>
+            </if>
+            <if test="params.tizhongStart != null ">
+                <![CDATA[  and a.tizhong >= #{params.tizhongStart}   ]]>
+            </if>
+            <if test="params.tizhongEnd != null ">
+                <![CDATA[  and a.tizhong <= #{params.tizhongEnd}   ]]>
+            </if>
+            <if test="params.zhuangtaiTypes != null and params.zhuangtaiTypes != ''">
+                and a.zhuangtai_types = #{params.zhuangtaiTypes}
+            </if>
+            <if test=" params.jiankangrizhiContent != '' and params.jiankangrizhiContent != null and params.jiankangrizhiContent != 'null' ">
+                and a.jiankangrizhi_content like CONCAT('%',#{params.jiankangrizhiContent},'%')
+            </if>
+            <if test=" params.suoshuriqiTimeStart != '' and params.suoshuriqiTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.suoshuriqi_time) >= UNIX_TIMESTAMP(#{params.suoshuriqiTimeStart}) ]]>
+            </if>
+            <if test=" params.suoshuriqiTimeEnd != '' and params.suoshuriqiTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.suoshuriqi_time) <= UNIX_TIMESTAMP(#{params.suoshuriqiTimeEnd}) ]]>
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.reliangStart != null ">
+                <![CDATA[  and a.reliang >= #{params.reliangStart}   ]]>
+            </if>
+            <if test="params.reliangEnd != null ">
+                <![CDATA[  and a.reliang <= #{params.reliangEnd}   ]]>
+            </if>
+            <if test="params.bmiZhiStart != null ">
+                <![CDATA[  and a.bmi_zhi >= #{params.bmiZhiStart}   ]]>
+            </if>
+            <if test="params.bmiZhiEnd != null ">
+                <![CDATA[  and a.bmi_zhi <= #{params.bmiZhiEnd}   ]]>
+            </if>
+            <if test="params.tuijianTypes != null and params.tuijianTypes != ''">
+                and a.tuijian_types = #{params.tuijianTypes}
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
